@@ -9,10 +9,11 @@
 
 -export([start/2, stop/1]).
 
-start(_StartType, _StartArgs) ->
-    ephone_book_sup:start_link().
+start(_StartType, StartArgs) ->
+  {ok, _ServerPid} = ephone_book_server:start(StartArgs),
+  ephone_book_sup:start_link().
 
 stop(_State) ->
-    ok.
+  ok = ephone_book_server:stop().
 
 %% internal functions

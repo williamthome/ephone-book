@@ -2,7 +2,11 @@
  [{description, "An OTP application"},
   {vsn, "0.1.0"},
   {registered, []},
-  {mod, {ephone_book_app, []}},
+  {mod, {ephone_book_app, #{
+    host => {127,0,0,1},
+    port => 2938,
+    origin => "http://localhost"
+  }}},
   {applications,
    [kernel,
     stdlib,
