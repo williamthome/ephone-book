@@ -5,7 +5,8 @@
   {mod, {ephone_book_app, []}},
   {applications,
    [kernel,
-    stdlib
+    stdlib,
+    epgsql
    ]},
   {env,[]},
   {modules, []},
