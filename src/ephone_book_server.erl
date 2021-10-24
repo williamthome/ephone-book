@@ -14,6 +14,7 @@ start(#{host := Host, port := Port, origin := Origin})
   andalso Port =< 65535 ->
 
   Routes = [
+    {"/", contacts_list_handler, ?NO_OPTIONS},
     {"/[...]", ephone_book_server, ?NO_OPTIONS}
   ],
   Dispatch = cowboy_router:compile([{?HOST_MATCH, Routes}]),
