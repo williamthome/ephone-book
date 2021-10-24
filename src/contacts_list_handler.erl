@@ -2,11 +2,7 @@
 
 -export([init/2]).
 
+-define(HTML_PATH, "index.html").
+
 init(Req, Opts) ->
-  Res = cowboy_req:reply(
-    200,
-    #{<<"content-type">> => <<"text/plain; charset=utf-8">>},
-    <<"My contacts list">>,
-    Req
-  ),
-  {ok, Res, Opts}.
+  ephone_book_server:html_response(Req, Opts, ?HTML_PATH).
