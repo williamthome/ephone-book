@@ -9,6 +9,8 @@
 -define(HOST_MATCH, ?ANY_HOST).
 -define(LISTENER, ephone_book).
 
+-define(TEMPLATE_FILENAME, "template.html").
+-define(TEMPLATE, file_utils:read_file_from_priv_dir(?TEMPLATE_FILENAME)).
 -define(FUNC_IF_HTML_NOT_FOUND, fun(FileAbsPath) ->
   ["<pre>cannot read:", FileAbsPath, "</pre>"]
 end).
@@ -37,10 +39,12 @@ stop() ->
    cowboy:stop_listener(?LISTENER).
 
 html_response(Req, Opts, HtmlPath) ->
-  Html = file_utils:read_file_from_priv_dir(
+  {ok, Template} = ?TEMPLATE,
+  Content = file_utils:read_file_from_priv_dir(
     HtmlPath,
     ?FUNC_IF_HTML_NOT_FOUND
   ),
+  Html = io_lib:format(Template, [Content]),
   Res = cowboy_req:reply(
     200,
     #{<<"content-type">> => <<"text/html; charset=utf-8">>},
