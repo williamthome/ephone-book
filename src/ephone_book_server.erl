@@ -1,6 +1,6 @@
 -module(ephone_book_server).
 
--export([start/1, stop/0, init/2]).
+-export([start/1, stop/0]).
 -export([html_response/3]).
 
 -define(ANY_HOST, '_').
@@ -20,7 +20,7 @@ start(#{host := Host, port := Port, origin := Origin})
 
   Routes = [
     {"/", contacts_list_handler, ?NO_OPTIONS},
-    {"/[...]", ephone_book_server, ?NO_OPTIONS}
+    {"/[...]", not_found_handler, ?NO_OPTIONS}
   ],
   Dispatch = cowboy_router:compile([{?HOST_MATCH, Routes}]),
 
@@ -35,15 +35,6 @@ start(#{host := Host, port := Port, origin := Origin})
 
 stop() ->
    cowboy:stop_listener(?LISTENER).
-
-init(Req, Opts) ->
-  Res = cowboy_req:reply(
-    200,
-    #{<<"content-type">> => <<"text/plain; charset=utf-8">>},
-    <<"Hello, World!">>,
-    Req
-  ),
-  {ok, Res, Opts}.
 
 html_response(Req, Opts, HtmlPath) ->
   Html = file_utils:read_file_from_priv_dir(
