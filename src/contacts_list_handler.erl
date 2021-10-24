@@ -5,4 +5,5 @@
 -define(HTML_PATH, "index.html").
 
 init(Req, Opts) ->
-  ephone_book_server:html_response(Req, Opts, ?HTML_PATH).
+  Contacts = "My contacts",
+  ephone_book_server:html_response(Req, Opts, ?HTML_PATH, [Contacts]).

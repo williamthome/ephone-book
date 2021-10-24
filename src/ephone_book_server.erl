@@ -1,7 +1,7 @@
 -module(ephone_book_server).
 
 -export([start/1, stop/0]).
--export([html_response/3]).
+-export([html_response/4]).
 
 -define(ANY_HOST, '_').
 -define(NO_OPTIONS, []).
@@ -38,13 +38,14 @@ start(#{host := Host, port := Port, origin := Origin})
 stop() ->
    cowboy:stop_listener(?LISTENER).
 
-html_response(Req, Opts, HtmlPath) ->
+html_response(Req, Opts, HtmlPath, Replacements) ->
   {ok, Template} = ?TEMPLATE,
   Content = file_utils:read_file_from_priv_dir(
     HtmlPath,
     ?FUNC_IF_HTML_NOT_FOUND
   ),
-  Html = io_lib:format(Template, [Content]),
+  ContentWithReplacements = io_lib:format(Content, Replacements),
+  Html = io_lib:format(Template, [ContentWithReplacements]),
   Res = cowboy_req:reply(
     200,
     #{<<"content-type">> => <<"text/html; charset=utf-8">>},
