@@ -2,7 +2,7 @@
 
 -export([init/2]).
 
--define(HTML_PATH, "404.html").
+-define(HTML_PATH, "static/html/404.html").
 
 init(Req, Opts) ->
   ephone_book_server:html_response(Req, Opts, ?HTML_PATH, []).

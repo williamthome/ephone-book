@@ -9,7 +9,7 @@
 -define(HOST_MATCH, ?ANY_HOST).
 -define(LISTENER, ephone_book).
 
--define(TEMPLATE_FILENAME, "template.html").
+-define(TEMPLATE_FILENAME, "static/html/template.html").
 -define(TEMPLATE, file_utils:read_file_from_priv_dir(?TEMPLATE_FILENAME)).
 -define(FUNC_IF_HTML_NOT_FOUND, fun(FileAbsPath) ->
   ["<pre>cannot read:", FileAbsPath, "</pre>"]

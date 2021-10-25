@@ -2,7 +2,7 @@
 
 -export([init/2]).
 
--define(HTML_PATH, "index.html").
+-define(HTML_PATH, "static/html/index.html").
 
 -record(contact, {
   name,
