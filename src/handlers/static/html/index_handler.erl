@@ -2,12 +2,9 @@
 
 -export([init/2]).
 
--define(HTML_PATH, "static/html/index.html").
+-include("../../../models/contact.hrl").
 
--record(contact, {
-  name,
-  phone
-}).
+-define(HTML_PATH, "static/html/index.html").
 
 init(Req, Opts) ->
   Contacts = [
