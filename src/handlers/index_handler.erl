@@ -1,4 +1,4 @@
--module(contacts_list_handler).
+-module(index_handler).
 
 -export([init/2]).
 

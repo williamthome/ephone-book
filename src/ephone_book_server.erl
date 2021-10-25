@@ -21,7 +21,7 @@ start(#{host := Host, port := Port, origin := Origin})
   andalso Port =< 65535 ->
 
   Routes = [
-    {"/", contacts_list_handler, ?NO_OPTIONS},
+    {"/", index_handler, ?NO_OPTIONS},
     {"/static/css/[...]", cowboy_static, {priv_dir, ephone_book, "static/css"}},
     {"/[...]", not_found_handler, ?NO_OPTIONS}
   ],
