@@ -22,6 +22,7 @@ start(#{host := Host, port := Port, origin := Origin})
 
   Routes = [
     {"/", contacts_list_handler, ?NO_OPTIONS},
+    {"/static/css/[...]", cowboy_static, {priv_dir, ephone_book, "static/css"}},
     {"/[...]", not_found_handler, ?NO_OPTIONS}
   ],
   Dispatch = cowboy_router:compile([{?HOST_MATCH, Routes}]),
