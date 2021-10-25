@@ -1,5 +1,16 @@
 <main>
   <h2>My contacts list</h2>
+  <form action="/api/contacts" method="post">
+    <label>
+      Name:
+      <input type="text" name="name">
+    </label>
+    <label>
+      Number:
+      <input type="text" name="number">
+    </label>
+    <input type="submit" value="Add">
+  </form>
   <ul class="contacts-list">
     ~ts
   </ul>

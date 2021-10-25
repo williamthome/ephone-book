@@ -1,7 +1,7 @@
 -module(ephone_book_server).
 
 -export([start/1, stop/0]).
--export([html_response/4]).
+-export([html_response/4, read_and_match_urlencoded_body/2, read_urlencoded_body/1]).
 
 -define(ANY_HOST, '_').
 -define(NO_OPTIONS, []).
@@ -15,6 +15,8 @@
   ["<pre>cannot read:", FileAbsPath, "</pre>"]
 end).
 
+-define(EMPTY_BODY_ERROR, {error, no_request_body}).
+
 start(#{host := Host, port := Port, origin := Origin})
   when is_tuple(Host)
   andalso Port >= 1024
@@ -22,6 +24,7 @@ start(#{host := Host, port := Port, origin := Origin})
 
   Routes = [
     {"/", index_handler, ?NO_OPTIONS},
+    {"/api/contacts", api_contacts_handler, ?NO_OPTIONS},
     {"/static/css/[...]", cowboy_static, {priv_dir, ephone_book, "static/css"}},
     {"/[...]", not_found_handler, ?NO_OPTIONS}
   ],
@@ -54,3 +57,19 @@ html_response(Req, Opts, HtmlPath, Replacements) ->
     Req
   ),
   {ok, Res, Opts}.
+
+read_and_match_urlencoded_body(Fields, #{has_body := true} = Req)
+  when is_list(Fields) ->
+    {ok, Data, _Req} = cowboy_req:read_and_match_urlencoded_body(Fields, Req),
+    {ok, Data};
+
+read_and_match_urlencoded_body(Fields, _Req)
+  when is_list(Fields) ->
+    ?EMPTY_BODY_ERROR.
+
+read_urlencoded_body(#{has_body := true} = Req) ->
+  {ok, Data, _Req} = cowboy_req:read_urlencoded_body(Req),
+  {ok, Data};
+
+read_urlencoded_body(_Req) ->
+  ?EMPTY_BODY_ERROR.
