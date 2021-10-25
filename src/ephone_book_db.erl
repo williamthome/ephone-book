@@ -14,7 +14,7 @@ start_link() ->
   gen_server:start_link({local, ?SERVER}, ?MODULE, ?UNDEFINED_CONNECTION, []).
 
 connect() ->
-  Password = get_password("Db password: "),
+  Password = password_utils:get_password("Db password: "),
   connect(Password).
 
 connect(Password) ->
@@ -25,10 +25,6 @@ disconnect() ->
 
 query(Query) ->
   gen_server:call(?SERVER, {query, Query}).
-
-get_password(Label) ->
-  io:format(Label),
-  io:get_password().
 
 %% Server
 
