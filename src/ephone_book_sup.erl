@@ -33,6 +33,10 @@ init([]) ->
     #{
       id => ephone_book_db,
       start => {ephone_book_db, start_link, []}
+    },
+    #{
+      id => contacts_storage,
+      start => {contacts_storage, start_link, []}
     }
   ],
   {ok, {SupFlags, ChildSpecs}}.
