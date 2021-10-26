@@ -6,7 +6,7 @@
 -export([test/0]).
 -export([
   start_link/0,
-  new/1, get_by_name/1, update_by_name/2, delete_by_name/1
+  new/1, get_by_id/1, update_by_id/2, delete_by_id/1
 ]).
 -export([
   init/1, handle_call/3, handle_cast/2, terminate/2
@@ -19,16 +19,17 @@
 %% Test
 
 test() ->
-  Contact = #contact{name = "Foo", phone = "123"},
+  Contact = #contact{id = 0, name = "Foo", phone = "123"},
+  ContactId = Contact#contact.id,
   ContactName = Contact#contact.name,
   {ok, Created} = new(Contact),
   true = Created =:= Contact,
   NewPhone = "456",
-  {ok, _Updated} = update_by_name(ContactName, #{phone => NewPhone}),
-  {ok, Found} = get_by_name(ContactName),
-  UpdatedContact = #contact{name = ContactName, phone = NewPhone},
+  {ok, _Updated} = update_by_id(ContactId, #{phone => NewPhone}),
+  {ok, Found} = get_by_id(ContactId),
+  UpdatedContact = #contact{id = ContactId, name = ContactName, phone = NewPhone},
   true = Found =:= UpdatedContact,
-  {ok, _Deleted} = delete_by_name(ContactName),
+  {ok, _Deleted} = delete_by_id(ContactId),
   ok.
 
 %% Client
@@ -39,19 +40,19 @@ start_link() ->
 new(Contact) ->
   gen_server:call(?MODULE, {new, Contact}).
 
-get_by_name(Name) ->
-  gen_server:call(?MODULE, {get_by_name, Name}).
+get_by_id(Id) ->
+  gen_server:call(?MODULE, {get_by_id, Id}).
 
-update_by_name(Name, Payload) ->
-  gen_server:call(?MODULE, {update_by_name, Name, Payload}).
+update_by_id(Id, Payload) ->
+  gen_server:call(?MODULE, {update_by_id, Id, Payload}).
 
-delete_by_name(Name) ->
-  gen_server:call(?MODULE, {delete_by_name, Name}).
+delete_by_id(Id) ->
+  gen_server:call(?MODULE, {delete_by_id, Id}).
 
 %% Server
 
 init([]) ->
-  {ok, ets:new(?TABLE_NAME,  [{keypos, #contact.name}])}.
+  {ok, ets:new(?TABLE_NAME,  [{keypos, #contact.id}])}.
 
 handle_call({new, #contact{} = Contact}, _From, Storage) ->
   Reply = case ets:insert_new(Storage, Contact) of
@@ -60,25 +61,25 @@ handle_call({new, #contact{} = Contact}, _From, Storage) ->
   end,
   {reply, Reply, Storage};
 
-handle_call({get_by_name, Name}, _From, Storage) ->
-  Reply = case ets:lookup(Storage, Name) of
+handle_call({get_by_id, Id}, _From, Storage) ->
+  Reply = case ets:lookup(Storage, Id) of
     [Contact] -> {ok, Contact};
     [] -> {error, contact_does_not_exists}
   end,
   {reply, Reply, Storage};
 
-handle_call({update_by_name, Name, Payload}, _From, Storage) ->
+handle_call({update_by_id, Id, Payload}, _From, Storage) ->
   ElemSpec = parse_contact_elem_spec(Payload),
-  Reply = case ets:update_element(Storage, Name, ElemSpec) of
-    true -> {ok, Name};
+  Reply = case ets:update_element(Storage, Id, ElemSpec) of
+    true -> {ok, Id};
     false -> {error, contact_does_not_exists}
   end,
   {reply, Reply, Storage};
 
-handle_call({delete_by_name, Name}, _From, Storage) ->
-  Contact = ets:fun2ms(fun({contact, N, _}) -> N =:= Name end),
+handle_call({delete_by_id, Id}, _From, Storage) ->
+  Contact = ets:fun2ms(fun({contact, I, _, _}) -> I =:= Id end),
   Reply = case ets:select_delete(Storage, Contact) of
-    N when N > 0 -> {ok, Name};
+    N when N > 0 -> {ok, Id};
     0 -> {error, contact_does_not_exists}
   end,
   {reply, Reply, Storage}.
@@ -96,6 +97,7 @@ is_contact_field(Field)
   when is_atom(Field) ->
     lists:member(Field, ?CONTACT_FIELDS).
 
+contact_field_position(id) -> {ok, #contact.id};
 contact_field_position(name) -> {ok, #contact.name};
 contact_field_position(phone) -> {ok, #contact.phone};
 contact_field_position(_) -> {error, not_a_contact_key}.
