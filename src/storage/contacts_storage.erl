@@ -3,7 +3,7 @@
 -include_lib("stdlib/include/ms_transform.hrl").
 -include("../models/contact.hrl").
 
--export([test/0, test_validation/0]).
+-export([test/0, test_crud/0, test_validation/0]).
 -export([
   start_link/0, contact_field_position/1,
   new/1, get_by_id/1, update_by_id/2, delete_by_id/1
@@ -26,6 +26,11 @@
 %% Test
 
 test() ->
+  ok = test_crud(),
+  ok = test_validation(),
+  ok.
+
+test_crud() ->
   Contact = #contact{id = 0, name = "Foo", phone = "123"},
   ContactId = Contact#contact.id,
   ContactName = Contact#contact.name,
@@ -68,9 +73,12 @@ init([]) ->
 
 handle_call({new, Payload}, _From, Storage)
   when is_map(Payload) ->
-    Contact = cast(Payload),
-    Reply = case is_valid(Payload) of
+    Parsed = cast(Payload),
+    Reply = case is_valid(Parsed) of
       ok ->
+        Values = maps:values(Parsed),
+        Contact = list_to_tuple([contact | Values]),
+        io:format("Contact: ~p~n", [Contact]),
         case ets:insert_new(Storage, Contact) of
           true -> {ok, Contact};
           false -> ?CONTACT_ALREADY_EXISTS_ERROR
