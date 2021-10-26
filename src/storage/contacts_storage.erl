@@ -16,6 +16,10 @@
 -define(TABLE_NAME, contacts).
 -define(CONTACT_FIELDS, list_utils:indexed_map(record_info(fields, contact), 2)).
 
+-define(CONTACT_ALREADY_EXISTS_ERROR, {error, contact_already_exists}).
+-define(CONTACT_DOES_NOT_EXISTS_ERROR, {error, contact_does_not_exists}).
+-define(NOT_A_CONTACT_KEY_ERROR, {error, not_a_contact_key}).
+
 %% Test
 
 test() ->
@@ -57,14 +61,14 @@ init([]) ->
 handle_call({new, #contact{} = Contact}, _From, Storage) ->
   Reply = case ets:insert_new(Storage, Contact) of
     true -> {ok, Contact};
-    false -> {error, contact_already_exists}
+    false -> ?CONTACT_ALREADY_EXISTS_ERROR
   end,
   {reply, Reply, Storage};
 
 handle_call({get_by_id, Id}, _From, Storage) ->
   Reply = case ets:lookup(Storage, Id) of
     [Contact] -> {ok, Contact};
-    [] -> {error, contact_does_not_exists}
+    [] -> ?CONTACT_DOES_NOT_EXISTS_ERROR
   end,
   {reply, Reply, Storage};
 
@@ -72,7 +76,7 @@ handle_call({update_by_id, Id, Payload}, _From, Storage) ->
   ElemSpec = parse_contact_elem_spec(Payload),
   Reply = case ets:update_element(Storage, Id, ElemSpec) of
     true -> {ok, Id};
-    false -> {error, contact_does_not_exists}
+    false -> ?CONTACT_DOES_NOT_EXISTS_ERROR
   end,
   {reply, Reply, Storage};
 
@@ -80,7 +84,7 @@ handle_call({delete_by_id, Id}, _From, Storage) ->
   Contact = ets:fun2ms(fun({contact, I, _, _}) -> I =:= Id end),
   Reply = case ets:select_delete(Storage, Contact) of
     N when N > 0 -> {ok, Id};
-    0 -> {error, contact_does_not_exists}
+    0 -> ?CONTACT_DOES_NOT_EXISTS_ERROR
   end,
   {reply, Reply, Storage}.
 
@@ -96,7 +100,7 @@ terminate(_Reason, Storage) ->
 contact_field_position(Field) ->
   case lists:filter(fun({_Index, Name}) -> Name =:= Field end, ?CONTACT_FIELDS) of
     [{Index, _Name}] -> {ok, Index};
-    [] -> {error, not_a_contact_key}
+    [] -> ?NOT_A_CONTACT_KEY_ERROR
   end.
 
 parse_contact_elem_spec(Map)
@@ -109,7 +113,7 @@ parse_contact_elem_spec(Map, [Key | Keys], ElemSpecList) ->
       Value = maps:get(Key, Map),
       ElemSpec = {Position, Value},
       parse_contact_elem_spec(Map, Keys, [ElemSpec | ElemSpecList]);
-    {error, _Reason} ->
+    ?NOT_A_CONTACT_KEY_ERROR ->
       parse_contact_elem_spec(Map, Keys, ElemSpecList)
   end;
 
