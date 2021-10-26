@@ -73,12 +73,8 @@ init([]) ->
 
 handle_call({new, Payload}, _From, Storage)
   when is_map(Payload) ->
-    Parsed = cast(Payload),
-    Reply = case is_valid(Parsed) of
-      ok ->
-        Values = maps:values(Parsed),
-        Contact = list_to_tuple([contact | Values]),
-        io:format("Contact: ~p~n", [Contact]),
+    Reply = case map_to_contact(Payload) of
+      {ok, Contact} ->
         case ets:insert_new(Storage, Contact) of
           true -> {ok, Contact};
           false -> ?CONTACT_ALREADY_EXISTS_ERROR
@@ -149,17 +145,23 @@ is_valid(Payload)
   when is_map(Payload) ->
     AllRequired = validate_required(maps:keys(Payload), ?REQUIRED_CONTACT_FIELDS),
     case AllRequired of
-      true -> ok;
+      true -> {ok, Payload};
       false -> {error, some_fields_are_missing}
     end.
 
 validate_required(Fields, RequiredFields) ->
   lists:all(fun(Field) -> lists:member(Field, Fields) end, RequiredFields).
 
-%% TODO
+gen_id() ->
+  calendar:time_to_seconds(erlang:timestamp()).
 
-% gen_id(Table) ->
-%   case ets:last(Table) of
-%     '$end_of_table' -> 0;
-%     Key -> Key + 1
-%   end.
+map_to_contact(Payload)
+  when is_map(Payload) ->
+    case is_valid(cast(Payload)) of
+      {ok, Validated} ->
+        Id = gen_id(),
+        PayloadWithId = maps:merge(#{id => Id}, Validated),
+        Contact = map_utils:map_to_record(PayloadWithId, contact, ?CONTACT_FIELDS),
+        {ok, Contact};
+      Error -> Error
+    end.
