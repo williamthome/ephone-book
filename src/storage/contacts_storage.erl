@@ -5,7 +5,7 @@
 
 -export([test/0]).
 -export([
-  start_link/0,
+  start_link/0, contact_field_position/1,
   new/1, get_by_id/1, update_by_id/2, delete_by_id/1
 ]).
 -export([
@@ -14,7 +14,7 @@
 
 -define(SERVER, ?MODULE).
 -define(TABLE_NAME, contacts).
--define(CONTACT_FIELDS, list_utils:indexed_map(record_info(fields, contact), 1)).
+-define(CONTACT_FIELDS, list_utils:indexed_map(record_info(fields, contact), 2)).
 
 %% Test
 
@@ -97,10 +97,11 @@ is_contact_field(Field)
   when is_atom(Field) ->
     lists:any(fun({_Index, Name}) -> Name =:= Field end, ?CONTACT_FIELDS).
 
-contact_field_position(id) -> {ok, #contact.id};
-contact_field_position(name) -> {ok, #contact.name};
-contact_field_position(phone) -> {ok, #contact.phone};
-contact_field_position(_) -> {error, not_a_contact_key}.
+contact_field_position(Field) ->
+  case lists:filter(fun({_Index, Name}) -> Name =:= Field end, ?CONTACT_FIELDS) of
+    [{Index, _Name}] -> {ok, Index};
+    [] -> {error, not_a_contact_key}
+  end.
 
 parse_contact_elem_spec(Map)
   when is_map(Map) ->
