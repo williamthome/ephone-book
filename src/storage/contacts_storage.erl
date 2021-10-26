@@ -3,7 +3,7 @@
 -include_lib("stdlib/include/ms_transform.hrl").
 -include("../models/contact.hrl").
 
--export([test/0]).
+-export([test/0, test_validation/0]).
 -export([
   start_link/0, contact_field_position/1,
   new/1, get_by_id/1, update_by_id/2, delete_by_id/1
@@ -15,6 +15,7 @@
 -define(SERVER, ?MODULE).
 -define(TABLE_NAME, contacts).
 -define(CONTACT_FIELDS, record_info(fields, contact)).
+-define(REQUIRED_CONTACT_FIELDS, [name, phone]).
 -define(PRIVATE_CONTACT_FIELDS, [id]).
 -define(INDEXED_CONTACT_FIELDS, list_utils:indexed_map(?CONTACT_FIELDS, 2)).
 
@@ -36,6 +37,11 @@ test() ->
   UpdatedContact = #contact{id = ContactId, name = ContactName, phone = NewPhone},
   true = Found =:= UpdatedContact,
   {ok, _Deleted} = delete_by_id(ContactId),
+  ok.
+
+test_validation() ->
+  ok = is_valid(#{name => "Foo", phone => "123"}),
+  {error, _} = is_valid(#{}),
   ok.
 
 %% Client
@@ -63,9 +69,13 @@ init([]) ->
 handle_call({new, Payload}, _From, Storage)
   when is_map(Payload) ->
     Contact = cast(Payload),
-    Reply = case ets:insert_new(Storage, Contact) of
-      true -> {ok, Contact};
-      false -> ?CONTACT_ALREADY_EXISTS_ERROR
+    Reply = case is_valid(Payload) of
+      ok ->
+        case ets:insert_new(Storage, Contact) of
+          true -> {ok, Contact};
+          false -> ?CONTACT_ALREADY_EXISTS_ERROR
+        end;
+      Error -> Error
     end,
     {reply, Reply, Storage};
 
@@ -126,6 +136,17 @@ parse_contact_elem_spec(_Map, [], ElemSpecList) ->
 
 cast(Payload) ->
   map_utils:cast(Payload, ?CONTACT_FIELDS, ?PRIVATE_CONTACT_FIELDS).
+
+is_valid(Payload)
+  when is_map(Payload) ->
+    AllRequired = validate_required(maps:keys(Payload), ?REQUIRED_CONTACT_FIELDS),
+    case AllRequired of
+      true -> ok;
+      false -> {error, some_fields_are_missing}
+    end.
+
+validate_required(Fields, RequiredFields) ->
+  lists:all(fun(Field) -> lists:member(Field, Fields) end, RequiredFields).
 
 %% TODO
 
