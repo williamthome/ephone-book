@@ -6,7 +6,7 @@
 -export([test/0, test_crud/0, test_validation/0]).
 -export([
   start_link/0, contact_field_position/1,
-  new/1, get_by_id/1, update_by_id/2, delete_by_id/1
+  new/1, get_all/0, get_by_id/1, update_by_id/2, delete_by_id/1
 ]).
 -export([
   init/1, handle_call/3, handle_cast/2, terminate/2
@@ -57,6 +57,9 @@ start_link() ->
 new(Contact) ->
   gen_server:call(?MODULE, {new, Contact}).
 
+get_all() ->
+  gen_server:call(?MODULE, get_all).
+
 get_by_id(Id) ->
   gen_server:call(?MODULE, {get_by_id, Id}).
 
@@ -88,6 +91,10 @@ handle_call({get_by_id, Id}, _From, Storage) ->
     [Contact] -> {ok, Contact};
     [] -> ?CONTACT_DOES_NOT_EXISTS_ERROR
   end,
+  {reply, Reply, Storage};
+
+handle_call(get_all, _From, Storage) ->
+  Reply = ets:tab2list(Storage),
   {reply, Reply, Storage};
 
 handle_call({update_by_id, Id, Payload}, _From, Storage) ->
