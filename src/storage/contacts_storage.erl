@@ -15,6 +15,7 @@
 -define(SERVER, ?MODULE).
 -define(TABLE_NAME, contacts).
 -define(CONTACT_FIELDS, record_info(fields, contact)).
+-define(PRIVATE_CONTACT_FIELDS, [id]).
 -define(INDEXED_CONTACT_FIELDS, list_utils:indexed_map(?CONTACT_FIELDS, 2)).
 
 -define(CONTACT_ALREADY_EXISTS_ERROR, {error, contact_already_exists}).
@@ -61,7 +62,7 @@ init([]) ->
 
 handle_call({new, Payload}, _From, Storage)
   when is_map(Payload) ->
-    Contact = map_utils:cast(Payload, ?CONTACT_FIELDS),
+    Contact = cast(Payload),
     Reply = case ets:insert_new(Storage, Contact) of
       true -> {ok, Contact};
       false -> ?CONTACT_ALREADY_EXISTS_ERROR
@@ -122,6 +123,9 @@ parse_contact_elem_spec(Map, [Key | Keys], ElemSpecList) ->
 
 parse_contact_elem_spec(_Map, [], ElemSpecList) ->
   ElemSpecList.
+
+cast(Payload) ->
+  map_utils:cast(Payload, ?CONTACT_FIELDS, ?PRIVATE_CONTACT_FIELDS).
 
 %% TODO
 
