@@ -7,11 +7,7 @@
 -define(HTML_PATH, "static/html/index.html").
 
 init(Req, Opts) ->
-  Contacts = [
-    #contact{name = "Foo", phone = "123"},
-    #contact{name = "Bar", phone = "456"},
-    #contact{name = "Foobar", phone = "789"}
-  ],
+  Contacts = contacts_storage:get_all(),
   ContactsAsHtml = lists:map(fun contact_as_html/1, Contacts),
   ephone_book_server:html_response(Req, Opts, ?HTML_PATH, [ContactsAsHtml]).
 
