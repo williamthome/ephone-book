@@ -14,7 +14,7 @@
 
 -define(SERVER, ?MODULE).
 -define(TABLE_NAME, contacts).
--define(CONTACT_FIELDS, record_info(fields, contact)).
+-define(CONTACT_FIELDS, list_utils:indexed_map(record_info(fields, contact), 1)).
 
 %% Test
 
@@ -95,7 +95,7 @@ terminate(_Reason, Storage) ->
 
 is_contact_field(Field)
   when is_atom(Field) ->
-    lists:member(Field, ?CONTACT_FIELDS).
+    lists:any(fun({_Index, Name}) -> Name =:= Field end, ?CONTACT_FIELDS).
 
 contact_field_position(id) -> {ok, #contact.id};
 contact_field_position(name) -> {ok, #contact.name};
