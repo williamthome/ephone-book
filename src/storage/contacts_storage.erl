@@ -14,7 +14,8 @@
 
 -define(SERVER, ?MODULE).
 -define(TABLE_NAME, contacts).
--define(CONTACT_FIELDS, list_utils:indexed_map(record_info(fields, contact), 2)).
+-define(CONTACT_FIELDS, record_info(fields, contact)).
+-define(INDEXED_CONTACT_FIELDS, list_utils:indexed_map(?CONTACT_FIELDS, 2)).
 
 -define(CONTACT_ALREADY_EXISTS_ERROR, {error, contact_already_exists}).
 -define(CONTACT_DOES_NOT_EXISTS_ERROR, {error, contact_does_not_exists}).
@@ -58,12 +59,14 @@ delete_by_id(Id) ->
 init([]) ->
   {ok, ets:new(?TABLE_NAME,  [{keypos, #contact.id}])}.
 
-handle_call({new, #contact{} = Contact}, _From, Storage) ->
-  Reply = case ets:insert_new(Storage, Contact) of
-    true -> {ok, Contact};
-    false -> ?CONTACT_ALREADY_EXISTS_ERROR
-  end,
-  {reply, Reply, Storage};
+handle_call({new, Payload}, _From, Storage)
+  when is_map(Payload) ->
+    Contact = map_utils:cast(Payload, ?CONTACT_FIELDS),
+    Reply = case ets:insert_new(Storage, Contact) of
+      true -> {ok, Contact};
+      false -> ?CONTACT_ALREADY_EXISTS_ERROR
+    end,
+    {reply, Reply, Storage};
 
 handle_call({get_by_id, Id}, _From, Storage) ->
   Reply = case ets:lookup(Storage, Id) of
@@ -98,7 +101,7 @@ terminate(_Reason, Storage) ->
 %% Server / Helpers
 
 contact_field_position(Field) ->
-  case lists:filter(fun({_Index, Name}) -> Name =:= Field end, ?CONTACT_FIELDS) of
+  case lists:filter(fun({_Index, Name}) -> Name =:= Field end, ?INDEXED_CONTACT_FIELDS) of
     [{Index, _Name}] -> {ok, Index};
     [] -> ?NOT_A_CONTACT_KEY_ERROR
   end.
