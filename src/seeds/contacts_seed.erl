@@ -1,4 +1,4 @@
--module(contacts).
+-module(contacts_seed).
 -export([create_contacts_table/0]).
 
 create_contacts_table() ->
