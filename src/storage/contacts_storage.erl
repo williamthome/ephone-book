@@ -93,10 +93,6 @@ terminate(_Reason, Storage) ->
 
 %% Server / Helpers
 
-is_contact_field(Field)
-  when is_atom(Field) ->
-    lists:any(fun({_Index, Name}) -> Name =:= Field end, ?CONTACT_FIELDS).
-
 contact_field_position(Field) ->
   case lists:filter(fun({_Index, Name}) -> Name =:= Field end, ?CONTACT_FIELDS) of
     [{Index, _Name}] -> {ok, Index};
@@ -108,13 +104,12 @@ parse_contact_elem_spec(Map)
     parse_contact_elem_spec(Map, maps:keys(Map), []).
 
 parse_contact_elem_spec(Map, [Key | Keys], ElemSpecList) ->
-  case is_contact_field(Key) of
-    true ->
-      {ok, Position} = contact_field_position(Key),
+  case contact_field_position(Key) of
+    {ok, Position} ->
       Value = maps:get(Key, Map),
       ElemSpec = {Position, Value},
       parse_contact_elem_spec(Map, Keys, [ElemSpec | ElemSpecList]);
-    false ->
+    {error, _Reason} ->
       parse_contact_elem_spec(Map, Keys, ElemSpecList)
   end;
 
