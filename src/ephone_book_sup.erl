@@ -35,8 +35,8 @@ init([]) ->
       start => {ephone_book_db, start_link, []}
     },
     #{
-      id => contacts_storage,
-      start => {contacts_storage, start_link, []}
+      id => ephone_book_storage_sup,
+      start => {ephone_book_storage_sup, start_link, []}
     }
   ],
   {ok, {SupFlags, ChildSpecs}}.
