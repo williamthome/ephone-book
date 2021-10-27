@@ -5,7 +5,7 @@
   {mod, {ephone_book_app, #{
     host => {127,0,0,1},
     port => 2938,
-    origin => "http://localhost"
+    protocol => http
   }}},
   {applications,
    [kernel,

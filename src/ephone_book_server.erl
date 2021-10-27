@@ -22,7 +22,7 @@ end).
 
 -define(EMPTY_BODY_ERROR, {error, no_request_body}).
 
-start(#{host := Host, port := Port, origin := Origin})
+start(#{host := Host, port := Port, protocol := Protocol})
   when is_tuple(Host)
   andalso Port >= 1024
   andalso Port =< 65535 ->
@@ -41,7 +41,10 @@ start(#{host := Host, port := Port, origin := Origin})
 
   {ok, CowboyPid} = cowboy:start_clear(?LISTENER, TransOpts, ProtoOpts),
 
-  io:format("Server running at ~s:~p~n", [Origin, Port]),
+  io:format(
+    "Server running at ~p://~s:~p~n",
+    [Protocol, host_to_string(Host), Port]
+  ),
 
   {ok, CowboyPid}.
 
@@ -83,3 +86,13 @@ read_urlencoded_body(_Req) ->
 reply_with_body_as_binary(Req, Data) ->
   ReqWithBody = cowboy_req:set_resp_body(erlang:term_to_binary(Data), Req),
   cowboy_req:reply(200, ReqWithBody).
+
+host_to_string({127,0,0,1}) ->
+  "localhost";
+
+host_to_string(HostAsTuple)
+  when is_tuple(HostAsTuple) ->
+    ToIntFn = fun(N) -> integer_to_list(N) end,
+    AsList = lists:map(ToIntFn, tuple_to_list(HostAsTuple)),
+    WithDots = lists:join(".", AsList),
+    lists:flatten(WithDots).
