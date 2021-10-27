@@ -11,12 +11,33 @@
     </label>
     <input type="submit" value="Add">
   </form>
-  <ul class="contacts-list">
+  <ul id="contacts-list">
     ~ts
   </ul>
 </main>
 
 <script>
+  document
+    .getElementById("contacts-list")
+    .addEventListener("click", e => {
+      const { target } = e
+
+      const actionByTargetId = {
+        "contact-delete": () => {
+          const { contactId } = target.dataset
+
+          if (!confirm(
+            `Confirm delete the contact with id ${contactId}?`
+          )) return
+
+          alert("TODO: Delete the contact")
+        }
+      }
+
+      const action = actionByTargetId[target.id]
+      action && action()
+    })
+
   async function doSubmit(e) {
     e.preventDefault()
 

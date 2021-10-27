@@ -11,8 +11,12 @@ init(Req, Opts) ->
   ContactsAsHtml = lists:map(fun contact_as_html/1, Contacts),
   ephone_book_server:html_response(Req, Opts, ?HTML_PATH, [ContactsAsHtml]).
 
-contact_as_html(#contact{name = Name, phone = Phone}) ->
+contact_as_html(#contact{id = Id, name = Name, phone = Phone}) ->
   io_lib:format(
-    "<li class=\"contact\"><strong>~s</strong> - ~s</li>",
-    [Name, Phone]
+    "<li id=\"contact\">
+      <span class=\"contact-name\">~s</span>
+      <span class=\"contact-phone\">~s</span>
+      <button id=\"contact-delete\" data-contact-id=\"~p\">Delete</button>
+    </li>",
+    [Name, Phone, Id]
   ).
