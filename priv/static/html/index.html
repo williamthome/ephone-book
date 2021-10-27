@@ -19,36 +19,42 @@
 <script>
   document
     .getElementById("contacts-list")
-    .addEventListener("click", e => {
+    .addEventListener("click", async (e) => {
       const { target } = e
 
       const actionByTargetId = {
-        "contact-delete": () => {
+        "contact-delete": async () => {
           const { contactId } = target.dataset
 
           if (!confirm(
             `Confirm delete the contact with id ${contactId}?`
           )) return
 
-          alert("TODO: Delete the contact")
+          await doFetch(fetch(`/api/contacts/${contactId}`, {
+            method: "delete",
+          }))
         }
       }
 
       const action = actionByTargetId[target.id]
-      action && action()
+      action && await action()
     })
 
   async function doSubmit(e) {
     e.preventDefault()
 
+    await doFetch(fetch("/api/contacts", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: encodeFormData(e.target),
+    }))
+  }
+
+  async function doFetch(fetchFn) {
     try {
-      const response = await fetch("/api/contacts", {
-        method: "post",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: encodeFormData(e.target),
-      })
+      const response = await fetchFn
 
       if (!response.ok) throw response
 
