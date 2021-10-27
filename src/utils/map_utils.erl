@@ -1,9 +1,14 @@
 -module(map_utils).
 
--export([test/0, test_map_to_record/0]).
+-export([test/0, test_cast/0, test_map_to_record/0]).
 -export([cast/2, cast/3, map_to_record/3]).
 
 test() ->
+  ok = test_cast(),
+  ok = test_map_to_record(),
+  ok.
+
+test_cast() ->
   Map = #{foo => "foo", bar => "bar", invalid_key => ignore, private => ignore},
   Fields = [foo, bar],
   PrivateFields = [private],
@@ -13,7 +18,6 @@ test() ->
 test_map_to_record() ->
   Map = #{foo => "foo", bar => "bar"},
   Record = map_to_record(Map, foobar, [foo, bar]),
-  io:format("Record: ~p~n", [Record]),
   {foobar, "foo", "bar"} = Record,
   ok.
 
