@@ -42,7 +42,7 @@ start(#{host := Host, port := Port, protocol := Protocol})
   {ok, CowboyPid} = cowboy:start_clear(?LISTENER, TransOpts, ProtoOpts),
 
   io:format(
-    "Server running at ~p://~s:~p~n",
+    "Server running at ~s://~s:~p~n",
     [Protocol, host_to_string(Host), Port]
   ),
 
