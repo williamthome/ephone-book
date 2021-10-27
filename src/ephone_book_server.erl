@@ -1,7 +1,12 @@
 -module(ephone_book_server).
 
 -export([start/1, stop/0]).
--export([html_response/4, read_and_match_urlencoded_body/2, read_urlencoded_body/1]).
+-export([
+  html_response/4,
+  read_and_match_urlencoded_body/2,
+  read_urlencoded_body/1,
+  reply_with_body_as_binary/2
+]).
 
 -define(ANY_HOST, '_').
 -define(NO_OPTIONS, []).
@@ -73,3 +78,7 @@ read_urlencoded_body(#{has_body := true} = Req) ->
 
 read_urlencoded_body(_Req) ->
   ?EMPTY_BODY_ERROR.
+
+reply_with_body_as_binary(Req, Data) ->
+  ReqWithBody = cowboy_req:set_resp_body(erlang:term_to_binary(Data), Req),
+  cowboy_req:reply(200, ReqWithBody).

@@ -3,21 +3,18 @@
 -export([init/2]).
 
 -define(POST_METHOD, <<"POST">>).
+-define(CONTACT_FIELDS, [name, phone]).
 
 init(#{method := ?POST_METHOD} = Req, Opts) ->
-  Body = ephone_book_server:read_and_match_urlencoded_body(
-    [{name, nonempty}, {phone, nonempty}],
-    Req
-  ),
-  case Body of
-    {ok, Payload} ->
-      case contacts_storage:new(Payload) of
-        {ok, Contact} ->
-          io:format("Contact created: ~p~n", [Contact]);
-        Error ->
-          io:format("Error: ~p~n", [Error])
-      end;
-    Error ->
-      io:format("Error: ~p~n", [Error])
+  ContactOrError = case get_payload(Req) of
+    {ok, Payload} -> contacts_storage:new(Payload);
+    Error -> Error
   end,
-  {ok, Req, Opts}.
+  Res = ephone_book_server:reply_with_body_as_binary(Req, ContactOrError),
+  {ok, Res, Opts}.
+
+get_payload(Req) ->
+  ephone_book_server:read_and_match_urlencoded_body(
+    ?CONTACT_FIELDS,
+    Req
+  ).
