@@ -1,6 +1,6 @@
 <main>
   <h2>My contacts list</h2>
-  <form action="/api/contacts" method="post">
+  <form onsubmit="return doSubmit(event)">
     <label>
       Name:
       <input type="text" name="name">
@@ -15,3 +15,34 @@
     ~ts
   </ul>
 </main>
+
+<script>
+  async function doSubmit(e) {
+    e.preventDefault()
+
+    try {
+      const response = await fetch("/api/contacts", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: encodeFormData(e.target),
+      })
+
+      if (!response.ok) throw response
+
+      location.reload()
+    } catch (e) {
+      console.error(e)
+      alert("Something bad happened. Check the console for more info.")
+    }
+  }
+
+  function encodeFormData(formElement) {
+    const data = new URLSearchParams()
+    for (const [key, value] of new FormData(formElement)) {
+      data.append(key, value)
+    }
+    return data.toString()
+  }
+</script>
