@@ -26,7 +26,7 @@ RUN apk add --no-cache libstdc++ openssl ncurses-libs
 
 WORKDIR /usr/src/app
 
-COPY --from=build /usr/src/app/_build/prod/rel/ephone_book /app
+COPY --from=build /usr/src/app/_build/prod/rel/ephone_book /prod
 
 ENV HOST=0.0.0.0
 ENV PORT=8080
@@ -35,4 +35,4 @@ EXPOSE $PORT
 
 # run by erlang console, or
 # to run at background use "foreground" instead
-CMD ["/app/bin/ephone_book", "foreground"]
+CMD ["/prod/bin/ephone_book", "foreground"]
