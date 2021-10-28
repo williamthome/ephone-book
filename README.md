@@ -4,6 +4,10 @@ An OTP application
 
 ## Rebar3
 
+## Dev live reload
+
+    $ ./ephone_book.sh run dev
+
 ### Compile
 
     $ rebar3 compile
