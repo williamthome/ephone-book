@@ -35,4 +35,4 @@ EXPOSE $PORT
 
 # run by erlang console, or
 # to run at background use "foreground" instead
-CMD ["/app/bin/ephone_book", "console"]
+CMD ["/app/bin/ephone_book", "foreground"]
