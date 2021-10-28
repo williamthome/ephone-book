@@ -12,8 +12,11 @@ case "$1" in
       ;;
     run)
       case "$2" in
-        it|d)
-          docker run -"$2" --rm -p $PUBLIC_PORT:$EXPOSED_PORT --init $IMAGE
+        it)
+          docker run -it --rm -p $PUBLIC_PORT:$EXPOSED_PORT --init $IMAGE
+          ;;
+        d)
+          docker run -d -p $PUBLIC_PORT:$EXPOSED_PORT --init $IMAGE
           ;;
         *)
           echo "Please chose a run option in [it, d]."
