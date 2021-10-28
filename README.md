@@ -22,3 +22,11 @@ Shell released
 -----
 
     $ rebar3 as prod shell
+
+Docker
+-----
+
+    $ ./docker.sh build
+    $ ./docker.sh run it
+
+> navigate to http://0.0.0.0:2938
