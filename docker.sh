@@ -1,0 +1,33 @@
+#!/bin/sh
+
+set -e
+
+IMAGE=williamthome/ephone_book
+PUBLIC_PORT=2938
+EXPOSED_PORT=8080
+
+case "$1" in
+    build)
+      docker build -t $IMAGE .
+      ;;
+    run)
+      case "$2" in
+        it|d)
+          docker run -"$2" --rm -p $PUBLIC_PORT:$EXPOSED_PORT --init $IMAGE
+          ;;
+        *)
+          echo "Please chose a run option in [it, d]."
+          echo "it for iterable and d for detached"
+
+          exit 1
+          ;;
+      esac
+      ;;
+    *)
+      echo "Please chose a command in [build, run]"
+
+      exit 1
+      ;;
+esac
+
+exit 0
