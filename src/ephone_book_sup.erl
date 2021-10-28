@@ -30,10 +30,10 @@ init([]) ->
                intensity => 0,
                period => 1},
   ChildSpecs = [
-    #{
-      id => ephone_book_db,
-      start => {ephone_book_db, start_link, []}
-    },
+    % #{
+    %   id => ephone_book_db,
+    %   start => {ephone_book_db, start_link, []}
+    % },
     #{
       id => ephone_book_storage_sup,
       start => {ephone_book_storage_sup, start_link, []}
