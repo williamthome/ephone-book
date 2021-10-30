@@ -65,8 +65,12 @@ case "$1" in
       xdotool windowactivate $CurrentWindowId
     done
     ;;
+  dev-watch)
+    x-terminal-emulator -e ./ephone_book.sh run dev &
+    x-terminal-emulator -e ./ephone_book.sh watch &
+    ;;
   *)
-    echo "Please chose a command in [run, watch]"
+    echo "Please chose a command in [run, watch, dev-watch]"
 
     exit 1
     ;;
