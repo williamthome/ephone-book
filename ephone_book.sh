@@ -69,8 +69,12 @@ case "$1" in
     x-terminal-emulator -e ./ephone_book.sh run dev &
     x-terminal-emulator -e ./ephone_book.sh watch &
     ;;
+  deploy)
+    ./docker.sh build
+    flyctl deploy
+    ;;
   *)
-    echo "Please chose a command in [run, watch, dev-watch]"
+    echo "Please chose a command in [run, watch, dev-watch, deploy]"
 
     exit 1
     ;;
