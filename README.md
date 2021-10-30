@@ -2,11 +2,25 @@
 
 An OTP application
 
-## Rebar3
+## Dev
 
-## Dev live reload
+> Make sure to open your browser and the url from the current page
+be the app page.
+
+Live reload to watch changes in erlang modules and assets files
+
+    $ ./ephone_book.sh dev-watch
+
+Live reload for erlang modules
 
     $ ./ephone_book.sh run dev
+
+Live reload for assets files
+
+    $ ./ephone_book.sh watch
+
+## Rebar3
+
 
 ### Compile
 
@@ -32,7 +46,7 @@ An OTP application
 
 ### Run
 
-Console iterable
+Attached to the console (interactive)
 
     $ ./docker.sh run it
 
@@ -42,15 +56,9 @@ or detached
 
 > navigate to http://0.0.0.0:2938
 
-## Deploy to fly.io
+## Deploying to fly.io
 
-### Command used to create the app:
+Command used to create the app:\
+$ flyctl launch --image williamthome/ephone_book --name ephone-book
 
-    $ flyctl launch --image williamthome/ephone_book --name ephone-book
-
-### Deploying
-
-> Ensure to first build the image before deploy because flyctl looks for an existing local image.
-
-    $ ./docker.sh build
-    $ flyctl deploy
+    $ ./ephone_book.sh deploy
