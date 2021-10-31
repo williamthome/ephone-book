@@ -8,6 +8,7 @@ EXPOSED_PORT=8080
 
 case "$1" in
     build)
+      ./ephone_book.sh release
       docker build -t $IMAGE .
       ;;
     run)
