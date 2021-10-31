@@ -1,31 +1,31 @@
-<main>
-  <h2>My contacts list</h2>
+<header>
+  <h2>EPhoneBook</h2>
+</header>
+<main class="container">
   <form onsubmit="return doSubmit(event)">
     <label>
       Name:
-      <input type="text" name="name">
+      <input type="text" name="name" required>
     </label>
     <label>
       Phone:
-      <input type="text" name="phone">
+      <input type="text" name="phone" required>
     </label>
-    <input type="submit" value="Add">
+    <input class="primary-button" type="submit" value="Add">
   </form>
-  <ul id="contacts-list">
+  <ul id="contact-list">
     ~ts
   </ul>
 </main>
 
 <script>
   document
-    .getElementById("contacts-list")
+    .getElementById("contact-list")
     .addEventListener("click", async (e) => {
-      const { target } = e
+      const { target: { dataset: { action, contactId } } } = e
 
-      const actionByTargetId = {
-        "contact-delete": async () => {
-          const { contactId } = target.dataset
-
+      const fnByTargetAction = {
+        "delete": async () => {
           if (!confirm(
             `Confirm delete the contact with id ${contactId}?`
           )) return
@@ -36,8 +36,8 @@
         }
       }
 
-      const action = actionByTargetId[target.id]
-      action && await action()
+      const actionFn = fnByTargetAction[action]
+      actionFn && await actionFn()
     })
 
   async function doSubmit(e) {

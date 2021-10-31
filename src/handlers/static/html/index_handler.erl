@@ -18,10 +18,21 @@ init(Req, Opts) ->
 
 contact_as_html(#contact{id = Id, name = Name, phone = Phone}) ->
   io_lib:format(
-    "<li id=\"contact\">
-      <span class=\"contact-name\">~s</span>
-      <span class=\"contact-phone\">~s</span>
-      <button id=\"contact-delete\" data-contact-id=\"~p\">Delete</button>
+    "<li class=\"contact\">
+      <img class=\"avatar\" src=\"https://www.w3schools.com/howto/img_avatar.png\" alt=\"avatar\">
+      <div class=\"contact__info\">
+        <span class=\"contact__info-name\">~s</span>
+        <span class=\"contact__info-phone\">~s</span>
+      </div>
+      <div class=\"contact__actions\">
+        <button
+          class=\"contact__actions-delete secondary-button\"
+          data-contact-id=\"~p\"
+          data-action=\"delete\"
+        >
+          Delete
+        </button>
+      </div>
     </li>",
     [Name, Phone, Id]
   ).
