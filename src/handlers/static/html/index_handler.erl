@@ -17,9 +17,10 @@ init(Req, Opts) ->
   ephone_book_server:html_response(Req, Opts, ?HTML_PATH, [ContactsAsHtml]).
 
 contact_as_html(#contact{id = Id, name = Name, phone = Phone}) ->
+  AvatarImg = file_utils:priv_dir_concat("/static/img/avatar.png"),
   io_lib:format(
     "<li class=\"contact\">
-      <img class=\"avatar\" src=\"https://www.w3schools.com/howto/img_avatar.png\" alt=\"avatar\">
+      <img class=\"avatar\" src=\"~s\" alt=\"avatar\">
       <div class=\"contact__info\">
         <span class=\"contact__info-name\">~s</span>
         <span class=\"contact__info-phone\">~s</span>
@@ -34,5 +35,5 @@ contact_as_html(#contact{id = Id, name = Name, phone = Phone}) ->
         </button>
       </div>
     </li>",
-    [Name, Phone, Id]
+    [AvatarImg, Name, Phone, Id]
   ).
