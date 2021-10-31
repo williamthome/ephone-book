@@ -32,7 +32,7 @@ input[type="search"]  {
 
 form {
   width: 100%;
-  padding: 1rem 0;
+  padding: 1rem 1rem;
   display: grid;
   grid-auto-flow: row;
   row-gap: 1rem;
