@@ -3,6 +3,9 @@
 set -e
 
 case "$1" in
+  release)
+    rebar3 as prod release
+    ;;
   run)
     case "$2" in
       dev)
@@ -74,7 +77,7 @@ case "$1" in
     flyctl deploy
     ;;
   *)
-    echo "Please chose a command in [run, watch, dev-watch, deploy]"
+    echo "Please chose a command in [release, run, watch, dev-watch, deploy]"
 
     exit 1
     ;;
