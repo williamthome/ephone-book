@@ -15,6 +15,8 @@ body {
 nav {
   padding: 1rem;
   box-shadow: 0 4px 8px -4px rgba(0,0,0,.2);
+  display: flex;
+  justify-content: space-between;
 }
 
 .container {
@@ -72,8 +74,13 @@ li {
   list-style: none;
 }
 
-.brand {
-  font-size: 1rem;
+nav .brand {
+  text-decoration: none;
+  font-size: 0.75rem;
+  color: #333;
+}
+
+nav .brand h1 {
   margin: 0;
 }
 
