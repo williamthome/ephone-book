@@ -14,7 +14,9 @@ init(Req, Opts) ->
   % }),
   Contacts = contacts_storage:get_all(),
   ContactsAsHtml = lists:map(fun contact_as_html/1, Contacts),
-  ephone_book_server:html_response(Req, Opts, ?HTML_PATH, [ContactsAsHtml]).
+  ephone_book_server:html_response(Req, Opts, ?HTML_PATH, #{
+    body => ContactsAsHtml
+  }).
 
 contact_as_html(#contact{id = Id, name = Name, phone = Phone}) ->
   AvatarImg = file_utils:priv_dir_concat("/static/img/avatar.png"),

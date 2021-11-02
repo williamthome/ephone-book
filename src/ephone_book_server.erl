@@ -2,6 +2,7 @@
 
 -export([start/1, stop/0]).
 -export([
+  html_response/3,
   html_response/4,
   read_and_match_urlencoded_body/2,
   read_urlencoded_body/1,
@@ -16,9 +17,6 @@
 
 -define(TEMPLATE_FILENAME, "static/html/template.html").
 -define(TEMPLATE, file_utils:read_file_from_priv_dir(?TEMPLATE_FILENAME)).
--define(FUNC_IF_HTML_NOT_FOUND, fun(FileAbsPath) ->
-  ["<pre>cannot read:", FileAbsPath, "</pre>"]
-end).
 
 -define(EMPTY_BODY_ERROR, {error, no_request_body}).
 
@@ -52,21 +50,48 @@ start(#{host := Host, port := Port, protocol := Protocol})
 stop() ->
    cowboy:stop_listener(?LISTENER).
 
-html_response(Req, Opts, HtmlPath, Replacements) ->
-  {ok, Template} = ?TEMPLATE,
-  Content = file_utils:read_file_from_priv_dir(
-    HtmlPath,
-    ?FUNC_IF_HTML_NOT_FOUND
-  ),
-  ContentWithReplacements = io_lib:format(Content, Replacements),
-  Html = io_lib:format(Template, [ContentWithReplacements]),
-  Res = cowboy_req:reply(
-    200,
-    #{<<"content-type">> => <<"text/html; charset=utf-8">>},
-    Html,
-    Req
-  ),
-  {ok, Res, Opts}.
+html_response(Req, Opts, HtmlPath) ->
+  html_response(Req, Opts, HtmlPath, #{}).
+
+html_response(Req, Opts, HtmlPath, HtmlReplacements) ->
+    {ok, Template} = ?TEMPLATE,
+
+    HtmlFile = file_utils:read_file_from_priv_dir(HtmlPath),
+    HtmlBody = html_body_with_replacements_or_not_found(
+      HtmlFile, HtmlReplacements
+    ),
+
+    HtmlHead = maps:get(head, HtmlReplacements, ""),
+    Html = io_lib:format(Template, [HtmlHead, HtmlBody]),
+
+    Res = cowboy_req:reply(
+      200,
+      #{<<"content-type">> => <<"text/html; charset=utf-8">>},
+      Html,
+      Req
+    ),
+    {ok, Res, Opts}.
+
+html_body_with_replacements_or_not_found({ok, Content}, Replacements)
+  when is_map(Replacements) ->
+    html_body_with_replacements(Content, Replacements);
+
+html_body_with_replacements_or_not_found({error, {not_found, AbsPath}}, _HtmlReplacements) ->
+  html_body_not_found(AbsPath).
+
+html_body_with_replacements(Content, Replacements) ->
+  BodyReplacement = maps:get(body, Replacements, ""),
+  safe_format_html(Content, [BodyReplacement]).
+
+safe_format_html(String, Values) ->
+  ControlSequences = ["~ts", "~p"],
+  case lists:any(fun(S) -> string:find(String, S) =/= nomatch end, ControlSequences) of
+    true -> io_lib:format(String, Values);
+    false -> String
+  end.
+
+html_body_not_found(AbsPath) ->
+  ["<pre>cannot read:", AbsPath, "</pre>"].
 
 read_and_match_urlencoded_body(Fields, #{has_body := true} = Req)
   when is_list(Fields) ->
