@@ -23,14 +23,25 @@
     <a class="brand" href="/">
       <h1>EPhoneBook</h1>
     </a>
-    <div class="links">
-      <a href="/" class="active">Contacts</a>
+    <div id="nav-links">
+      <a href="/">Contacts</a>
     </div>
   </nav>
   ~s
   <footer>
-    <span>Made by <a href="https://github.com/williamthome/ephone-book"><strong>William Fank Thomé</strong></a></span>
+    <span>Made by <a href="https://github.com/williamthome/ephone-book">
+        <strong>William Fank Thomé</strong></a>
+    </span>
   </footer>
+
+  <script>
+    const navlinks = document.getElementById("nav-links")
+    for (const anchor of navlinks.children) {
+      if (anchor.href !== location.href) continue
+      anchor.classList.add("active")
+      break
+    }
+  </script>
 </body>
 
 </html>

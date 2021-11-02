@@ -37,26 +37,26 @@ nav .brand h1 {
   margin: 0;
 }
 
-nav .links {
+#nav-links {
   display: table;
 }
 
-nav .links a {
+#nav-links a {
   display: table-cell;
   vertical-align: middle;
   padding: 1rem;
   transition: background-color 200ms;
 }
 
-nav .links a:hover {
+#nav-links a:hover {
   background-color: #CCC;
 }
 
-nav .links a.active {
+#nav-links a.active {
   position: relative;
 }
 
-nav .links a.active::after {
+#nav-links a.active::after {
   content: "";
   position: absolute;
   bottom: -2px;
