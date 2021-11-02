@@ -126,6 +126,11 @@ input[type="submit"] {
   background: var(--primary-dark-color);
 }
 
+a.primary-button {
+  padding: 0.5rem 1rem;
+  transition: background 100ms, color 100ms;
+}
+
 .secondary-button {
   background: none;
   color: #555;
