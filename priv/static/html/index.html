@@ -6,9 +6,12 @@
 </main>
 
 <script>
-  document
-    .getElementById("contact-list")
-    .addEventListener("click", async (e) => {
+  const containerElem = document.getElementsByClassName("container")[0]
+  const contactListElem = document.getElementById("contact-list")
+  const hasContactsListChildren = contactListElem.childElementCount > 0
+
+  if (hasContactsListChildren) {
+    contactListElem.addEventListener("click", async (e) => {
       const { target: { dataset: { action, contactId } } } = e
 
       const fnByTargetAction = {
@@ -22,8 +25,15 @@
           }))
         }
       }
-
       const actionFn = fnByTargetAction[action]
       actionFn && await actionFn()
     })
+  } else {
+    containerElem.innerHTML = `
+      <div class="no-contacts">
+        <p>No contacts have been created</p>
+        <a class="primary-button animate-bounce" href="/new">Create the first</a>
+      </div>
+    `
+  }
 </script>
