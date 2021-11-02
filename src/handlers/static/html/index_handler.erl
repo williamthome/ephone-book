@@ -15,6 +15,7 @@ init(Req, Opts) ->
   Contacts = contacts_storage:get_all(),
   ContactsAsHtml = lists:map(fun contact_as_html/1, Contacts),
   ephone_book_server:html_response(Req, Opts, ?HTML_PATH, #{
+    head => "<script type=\"text/javascript\" src=\"static/js/utils.js\" defer></script>",
     body => ContactsAsHtml
   }).
 
