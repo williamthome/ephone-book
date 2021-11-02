@@ -12,8 +12,9 @@ body {
   font-family: Montserrat, Verdana, sans-serif;
 }
 
-header {
-  padding: 0.5rem 1rem;
+nav {
+  padding: 1rem;
+  box-shadow: 0 4px 8px -4px rgba(0,0,0,.2);
 }
 
 .container {
@@ -69,6 +70,11 @@ ul {
 
 li {
   list-style: none;
+}
+
+.brand {
+  font-size: 1rem;
+  margin: 0;
 }
 
 .avatar {
