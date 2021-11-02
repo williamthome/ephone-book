@@ -29,7 +29,7 @@ case "$1" in
         ---------------------------------------------------------------
         "
 
-        rebar3 shell --script dev.escript
+        rebar3 as dev shell --script dev.escript
         ;;
       *)
         echo "Please chose a run option in [dev]."
