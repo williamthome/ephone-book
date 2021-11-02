@@ -85,7 +85,7 @@ html_body_with_replacements(Content, Replacements) ->
   safe_format_html(Content, [BodyReplacement]).
 
 safe_format_html(String, Values) ->
-  ControlSequences = ["~ts", "~p"],
+  ControlSequences = ["~s"],
   case lists:any(fun(S) -> string:find(String, S) =/= nomatch end, ControlSequences) of
     true -> io_lib:format(String, Values);
     false -> String
