@@ -27,6 +27,7 @@ start(#{host := Host, port := Port, protocol := Protocol})
 
   Routes = [
     {"/", index_handler, ?NO_OPTIONS},
+    {"/new", new_handler, ?NO_OPTIONS},
     {"/api/contacts", api_contacts_handler, ?NO_OPTIONS},
     {"/api/contacts/:id", api_contacts_handler, ?NO_OPTIONS},
     {"/static/css/[...]", cowboy_static, {priv_dir, ephone_book, "static/css"}},

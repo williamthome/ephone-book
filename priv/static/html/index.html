@@ -1,15 +1,4 @@
 <main class="container">
-  <form onsubmit="return doSubmit(event)">
-    <label>
-      Name:
-      <input type="text" name="name" required>
-    </label>
-    <label>
-      Phone:
-      <input type="text" name="phone" required>
-    </label>
-    <input class="primary-button" type="submit" value="Add">
-  </form>
   <ul id="contact-list">
     ~s
   </ul>
@@ -37,16 +26,4 @@
       const actionFn = fnByTargetAction[action]
       actionFn && await actionFn()
     })
-
-  async function doSubmit(e) {
-    e.preventDefault()
-
-    await doFetch(fetch("/api/contacts", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: encodeFormData(e.target),
-    }))
-  }
 </script>
