@@ -150,6 +150,7 @@ a.primary-button {
   align-items: center;
   justify-content: center;
   z-index: 999;
+   box-shadow: 0 3px 6px rgba(0,0,0,.15), 0 3px 6px rgba(0,0,0,.3);
 }
 
 .back-button {
