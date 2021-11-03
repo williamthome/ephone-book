@@ -78,6 +78,10 @@ case "$1" in
   deploy)
     ./docker.sh build
     flyctl deploy
+
+    echo
+    echo "If deploy succeeds, visit https://ephone-book.fly.dev/"
+    echo "nor app dashboard https://fly.io/apps/ephone-book"
     ;;
   release-run)
     ./ephone_book.sh release
