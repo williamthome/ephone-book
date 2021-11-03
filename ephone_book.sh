@@ -8,6 +8,9 @@ case "$1" in
     ;;
   run)
     case "$2" in
+      prod)
+        rebar3 as prod shell
+        ;;
       dev)
         echo "
         ---------------------------------------------------------------
@@ -32,7 +35,7 @@ case "$1" in
         rebar3 as dev shell --script dev.escript
         ;;
       *)
-        echo "Please chose a run option in [dev]."
+        echo "Please chose a run option in [prod, dev]."
 
         exit 1
         ;;
@@ -76,8 +79,12 @@ case "$1" in
     ./docker.sh build
     flyctl deploy
     ;;
+  release-run)
+    ./ephone_book.sh release
+    ./ephone_book.sh run prod
+    ;;
   *)
-    echo "Please chose a command in [release, run, watch, dev-watch, deploy]"
+    echo "Please chose a command in [release, run, watch, dev-watch, deploy, release-run]"
 
     exit 1
     ;;
