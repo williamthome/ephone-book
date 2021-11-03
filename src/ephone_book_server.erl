@@ -30,6 +30,7 @@ start(#{host := Host, port := Port, protocol := Protocol})
     {"/new", new_handler, ?NO_OPTIONS},
     {"/api/contacts", api_contacts_handler, ?NO_OPTIONS},
     {"/api/contacts/:id", api_contacts_handler, ?NO_OPTIONS},
+    {"/static/favicon.ico", cowboy_static, {priv_file, ephone_book, "static/favicon.ico"}},
     {"/static/css/[...]", cowboy_static, {priv_dir, ephone_book, "static/css"}},
     {"/static/img/[...]", cowboy_static, {priv_dir, ephone_book, "static/img"}},
     {"/static/js/[...]", cowboy_static, {priv_dir, ephone_book, "static/js"}},
